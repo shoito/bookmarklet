@@ -1,7 +1,7 @@
 jQuery(function () {
     var readNum = 0;
     var readSize = 0;
-    var totalNum = MicroJS.length;
+    var totalNum = getTotalNum();
     var totalSize = getTotalSize();
     jQuery('#results > li').each(function () {
         var li = jQuery(this);
@@ -23,12 +23,11 @@ jQuery(function () {
         jQuery.each(MicroJS, function (i, elem) {
             if (elem.url === url && current === read) {
                 readSize += parseFloat(elem.size.replace('kB', '').trim());
+                li.find('a').stop().fadeTo(500, 0.4);
                 return false;
             }
         });
-        if (li.find('div.status').length > 0) {
-            return;
-        }
+        if (li.find('div.status').length == 0) {
         jQuery('<div class="status"></div>').addClass(current).css({
             'float': 'left',
             'height': '100px',
@@ -54,6 +53,7 @@ jQuery(function () {
                 jQuery.each(MicroJS, function (i, elem) {
                     if (elem.url === url) {
                         readSize += parseFloat(elem.size.replace('kB', '').trim());
+                         li.find('a').stop().fadeTo(500, 0.4);
                         return false;
                     }
                 });
@@ -69,6 +69,7 @@ jQuery(function () {
                         readNum--;
                         readSize -= getSize(url);
                         readHistories.splice(i, 1);
+                        li.find('a').stop().fadeTo(500, 1);
                         return false;
                     }
                 });
@@ -76,7 +77,9 @@ jQuery(function () {
             localStorage.setItem(key, JSON.stringify(readHistories));
             updateScore(readNum, readSize);
         });
+        }
     });
+    
     if (jQuery('#score').length == 0) {
         jQuery('<div id="score"></div>').css({
             'z-index': 10,
@@ -116,11 +119,15 @@ jQuery(function () {
         jQuery('#scoreNum').text(_readNum + ' / ' + totalNum);
         jQuery('#scoreSize').text(_readSize + ' / ' + totalSize + ' kB');
     }
+    
+    function getTotalNum() {
+    	return jQuery('#results > li').length;
+    }
 
     function getTotalSize() {
         var total = 0;
-        MicroJS.forEach(function (elem, i) {
-            total += parseFloat(elem.size.replace('kB', '').trim());
+        jQuery('#results > li > a > div.size').each(function(i, elem) {
+        	total += parseFloat(elem.innerText.replace('kB', '').trim());
         });
         total = Math.round(total * 10) / 10;
         return total;
