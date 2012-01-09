@@ -127,7 +127,7 @@ jQuery(function () {
     function getTotalSize() {
         var total = 0;
         jQuery('#results > li > a > div.size').each(function(i, elem) {
-        	total += parseFloat(elem.innerText.replace('kB', '').trim());
+        	total += parseFloat(jQuery(elem).text().replace('kB', '').trim());
         });
         total = Math.round(total * 10) / 10;
         return total;
